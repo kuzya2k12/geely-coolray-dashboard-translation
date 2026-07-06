@@ -14,7 +14,7 @@ Python 3.9+.
 
 | Что | Зачем | Где взять |
 |-----|-------|-----------|
-| Дампы NOR приборки (`*.bin`, 2×64 МБ) | входные данные | снять со своей приборки (программатор Dediprog/Elnec, чип S25HL512T, BGA-24, 3.0 В) |
+| Дампы NOR приборки (`*.bin`, 2×64 МБ) | входные данные | готовые (китайский интерфейс): **[Яндекс.Диск](https://disk.yandex.by/d/vSQ8tQrcU28Sog)** — или снять со своей приборки (программатор Dediprog/Elnec, чип S25HL512T, BGA-24, 3.0 В) |
 | Референс-энкодер RLAD (`rlad-encoder.exe`) | «оракул» для проверки/пересборки | открытый пример Infineon: `github.com/Infineon/mtb-example-psoc-edge-gfx-rlad`, файл `utility/rlad-encoder.exe` |
 | Заголовки Infineon (`*.h`) | справка по структурам форматов | `github.com/Infineon/tviic2d-gfx-mw` (учтите EULA Infineon) |
 | Библиотеки Infineon (`*.a`) | для дизассемблера (восстановление формата) | тот же репозиторий Infineon |
