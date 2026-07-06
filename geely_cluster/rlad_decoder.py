@@ -90,3 +90,50 @@ def decode_image(data: bytes, width: int, height: int):
         pk, _, _ = decode_packet(bs, CNT_RLAD)
         pixels.extend(pk[:n])
     return pixels[:total]
+
+
+# --------------------------------------------------------------------------
+# A8 (одноканальный alpha) — формат ГЛИФОВ ШРИФТА
+#
+# Структура A8-RLAD пакета (8 пикселей), восстановлена методом oracle
+# (ResourceGenerator.exe ... -foA8 -cRLAD) и проверена на тест-глифе:
+#   4 бита  : cbpc     (бит на значение alpha; 0 = все значения = bias)
+#   8 бит   : bias     (базовое значение alpha)
+#   8 × cbpc: offset'ы (значение = bias + offset), только если cbpc > 0
+# Биты — единый поток из 32-битных слов LE, lsb->msb.
+# Отличие от RGBA8888: один канал (4-битный cbpc + 8-битный bias),
+# а не 4 канала.
+# --------------------------------------------------------------------------
+
+def decode_a8_packet(bs: BitStream, npix: int = CNT_RLAD):
+    """Декодирует один A8-пакет из npix значений alpha (0..255)."""
+    cbpc = bs.read(4)
+    bias = bs.read(8)
+    out = []
+    for _ in range(npix):
+        off = bs.read(cbpc) if cbpc > 0 else 0
+        out.append((bias + off) & 0xFF)
+    return out, cbpc, bias
+
+
+def decode_a8_image(data: bytes, width: int, height: int):
+    """Декодирует A8-RLAD-поток в список значений alpha (0..255) длиной w*h.
+    Это формат глифов шрифта приборки.
+
+    ВАЖНО: RLAD пакует ПОСТРОЧНО. Каждая строка начинается с нового пакета; пакеты
+    НЕ переходят границу строки. Последний пакет строки покрывает остаток (width % 8)
+    пикселей. (Подтверждено oracle-диффом на ширинах, не кратных 8.)
+    """
+    bs = BitStream(data)
+    alpha = []
+    for _y in range(height):
+        rem = width
+        while rem > 0 and bs.pos + 12 <= bs.nbits:
+            n = min(CNT_RLAD, rem)
+            cbpc = bs.read(4)
+            bias = bs.read(8)
+            for _k in range(n):
+                off = bs.read(cbpc) if cbpc > 0 else 0
+                alpha.append((bias + off) & 0xFF)
+            rem -= n
+    return alpha[:width * height]
