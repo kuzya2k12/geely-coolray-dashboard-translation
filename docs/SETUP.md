@@ -6,18 +6,34 @@
 ## 1. Зависимости
 
 ```
-pip install capstone pillow
+pip install -r requirements.txt      # capstone + pillow
 ```
 Python 3.9+.
+
+## Проверка декодера (без дампов и без энкодера)
+
+Корректность RLAD-декодера можно проверить сразу — тест-векторы зашиты в репозиторий:
+```
+python tests/test_rlad_decoder.py        # или: python -m pytest tests/
+```
+Должно быть `6/6 passed`. Это доказывает, что декодер работает, без проприетарного
+`rlad-encoder.exe`.
 
 ## 2. Что нужно достать отдельно
 
 | Что | Зачем | Где взять |
 |-----|-------|-----------|
 | Дампы NOR приборки (`*.bin`, 2×64 МБ) | входные данные | готовые (китайский интерфейс): **[Яндекс.Диск](https://disk.yandex.by/d/vSQ8tQrcU28Sog)** — или снять со своей приборки (программатор Dediprog/Elnec, чип S25HL512T, BGA-24, 3.0 В) |
-| Референс-энкодер RLAD (`rlad-encoder.exe`) | «оракул» для проверки/пересборки | открытый пример Infineon: `github.com/Infineon/mtb-example-psoc-edge-gfx-rlad`, файл `utility/rlad-encoder.exe` |
-| Заголовки Infineon (`*.h`) | справка по структурам форматов | `github.com/Infineon/tviic2d-gfx-mw` (учтите EULA Infineon) |
-| Библиотеки Infineon (`*.a`) | для дизассемблера (восстановление формата) | тот же репозиторий Infineon |
+| Референс-энкодер RLAD (`rlad-encoder.exe`) | «оракул» для проверки/пересборки RLAD | [github.com/Infineon/mtb-example-psoc-edge-gfx-rlad](https://github.com/Infineon/mtb-example-psoc-edge-gfx-rlad), файл `utility/rlad-encoder.exe` |
+| **ResourceGenerator.exe** + Bin2Text.exe | генератор ресурсов Infineon (оракул для формата surface/контейнера) | [github.com/Infineon/mtb-t2g-example-graphics-sample-drawing](https://github.com/Infineon/mtb-t2g-example-graphics-sample-drawing), путь `tool/graphics/bin/windows/` |
+| Заголовки Infineon (`*.h`) | справка по структурам форматов | [github.com/Infineon/tviic2d-gfx-mw](https://github.com/Infineon/tviic2d-gfx-mw) (учтите EULA Infineon) |
+| Библиотеки Infineon (`*.a`) | для дизассемблера (восстановление формата) | тот же репозиторий `tviic2d-gfx-mw` |
+
+> **Открытая экосистема Infineon TRAVEO — основа этого проекта.** Именно потому, что
+> SDK и инструменты (`rlad-encoder`, `ResourceGenerator`, `tviic2d-gfx-mw`) выложены
+> публично, удалось восстановить формат RLAD. Полный разбор релевантных репозиториев
+> Infineon (что в них есть и чего принципиально нет) — в
+> [INFINEON_REPOS.md](INFINEON_REPOS.md).
 
 Разложите так (пути, которые ожидает код):
 ```
