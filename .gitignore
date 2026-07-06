@@ -1,0 +1,30 @@
+# Дампы прошивки — НЕ публиковать (авторское право Geely + возможные приватные данные)
+*.bin
+Coolray_*.bin
+*_Dash_*.bin
+
+# SDK Infineon и его энкодер — НЕ публиковать (EULA / проприетарно)
+infineon-gfx/
+rlad-ex/
+*.exe
+*.a
+libutil_cm7.a
+libbasic_graphics_cm7.a
+reference/*.h
+
+# Результаты экспериментов (шум, производные от чужой прошивки)
+output/
+*.ppm
+*.png
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# ОС / редакторы
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
